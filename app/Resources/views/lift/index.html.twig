@@ -78,15 +78,17 @@
                 console.log('todo delete!');
                 e.preventDefault(); // empêche le comportement par défaut du navigateur et annule le href du lien
 
-                $(e.target).addClass('text-danger'); // traget est une propriété de "e" et permet de pointer sur l'élément sur lequel l'action à lieu. DOM Element object
+                // $(e.target).addClass('text-danger'); // traget est une propriété de "e" et permet de pointer sur l'élément sur lequel l'action à lieu. DOM Element object
                 //e.target.className = e.target.className+' text-danger';
-                console.log(
-                    e.target,
-                    $(e.target)[0] === e.target,
-                    $('.fa-trash')[5] === e.target
-                );
-                console.dir(e.target);
+                console.log(e.currentTarget === this);
+
+                $(this).addClass('text-danger'); // this est équivalent à e.currentTarget et pointe l'élément DOM sur lequel l'action à lieu.
+                $(this).find('.fa')
+                        .removeClass('fa-trash') 
+                        .addClass('fa-spinner') 
+                        .addClass('fa-spin');
             });
+
             
             // $('.js-rep-log-table tbody tr').on('click', function(){
             //     console.log('tbody tr on click ok!');
