@@ -21,12 +21,16 @@
                 </thead>
                 <tbody>
                 {% for repLog in repLogs %}
-                    <tr>
+                    <tr data-weight="{{ repLog.totalWeightLifted }}"> {# je crée un nouvele attribut data-weight qui corresponde à la valeur "repLog.totalWeightLifted" #}
                         <td>{{ repLog.itemLabel|trans }}</td>
                         <td>{{ repLog.reps }}</td>
                         <td>{{ repLog.totalWeightLifted }}</td>
                         <td>
-                            <a href="#" class="js-delete-rep-log">
+                            <a 
+                                href="#" 
+                                class="js-delete-rep-log"
+                                data-url="{{ path('rep_log_delete', {id: repLog.id}) }}"
+                            >
                                 <span class="fa fa-trash"></span>
                             </a>
                         </td>
@@ -41,7 +45,7 @@
                     <tr>
                         <td>&nbsp;</td>
                         <th>Total</th>
-                        <th>{{ totalWeight }}</th>
+                        <th class="js-total-weight">{{ totalWeight }}</th>
                         <td>&nbsp;</td>
                     </tr>
                 </tfoot>
@@ -78,15 +82,25 @@
                 console.log('todo delete!');
                 e.preventDefault(); // empêche le comportement par défaut du navigateur et annule le href du lien
 
-                // $(e.target).addClass('text-danger'); // traget est une propriété de "e" et permet de pointer sur l'élément sur lequel l'action à lieu. DOM Element object
-                //e.target.className = e.target.className+' text-danger';
-                console.log(e.currentTarget === this);
-
                 $(this).addClass('text-danger'); // this est équivalent à e.currentTarget et pointe l'élément DOM sur lequel l'action à lieu.
                 $(this).find('.fa')
                         .removeClass('fa-trash') 
                         .addClass('fa-spinner') 
                         .addClass('fa-spin');
+
+                var deleteUrl = $(this).data('url'); // .data() est un racourci pour lire l'attribut data
+                var $row = $(this).closest('tr'); //.closest() retourne le premier ancètre qui est un tr
+                var $totalWeightContainer = $table.find('.js-total-weight');
+                var newWeight = $totalWeightContainer.html() - $row.data('weight');// the magic line
+                //soustraction : la valeur de la classe totalWeightContainer - la valeur de l'attribut data weight de $row (tr)
+                $.ajax({
+                    url: deleteUrl, 
+                    method: 'DELETE', 
+                    success: function() {
+                        $row.fadeOut();
+                        $totalWeightContainer.html(newWeight);
+                    }
+                });
             });
 
             
