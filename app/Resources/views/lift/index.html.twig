@@ -71,16 +71,16 @@
     {{ parent() }}
     <script>
         var RepLogApp = {
-                // 1° clé d'initialisation définie sur une fonction (). 
-                // Nous l'appellerons quand la page se chargera. 
-                // et son travail consistera à attacher tous les gestionnaires d'événements pour tous les événements dont nous avons besoin sur notre tableau.
-                // l'argument $warper "correspond" à $table 
+            // 1° clé d'initialisation définie sur une fonction (). 
+            // Nous l'appellerons quand la page se chargera. 
+            // et son travail consistera à attacher tous les gestionnaires d'événements pour tous les événements dont nous avons besoin sur notre tableau.
+            // l'argument $warper "correspond" à $table 
                 initalize: function($wrapper){
                     this.$wrapper = $wrapper;
                     this.$wrapper.find('.js-delete-rep-log').on( 'click', this.handleRepLogDelete ); // la fonction est passée à l'action on ('click');
                     this.$wrapper.find('tbody tr').on('click', this.handleRowClick);
                 },
-                // 2° clé 
+            // 2° clé 
                 handleRepLogDelete: function(e) {
                     e.preventDefault();
                     $(this).addClass('text-danger');
@@ -91,63 +91,41 @@
 
                     var deleteUrl = $(this).data('url'); 
                     var $row = $(this).closest('tr');
-                    var $totalWeightContainer = this.$wrapper.find('.js-total-weight');
+                    var $totalWeightContainer = RepLogApp.$wrapper.find('.js-total-weight'); // je fait référence à la propriété statique $wrapper de l'objet repLogApp
                     var newWeight = $totalWeightContainer.html() - $row.data('weight');
 
                     $.ajax({
                         url: deleteUrl, 
                         method: 'DELETE', 
                         success: function() {
-                            $row.fadeOut();
+                            $row.fadeOut('normal', function(){
+                                $row.remove();
+                            });
                             $totalWeightContainer.html(newWeight);
+                            RepLogApp.updateTotalWeightLifted();
                         }
                     });
                 },
-                // 3° clé
+            // 3° clé
                 handleRowClick: function() {
                     console.log('tbody tr on click ok!');
+                },
+            // 4° clé
+                updateTotalWeightLifted: function() {
+                    var totalWeight = 0;
+                    this.$wrapper.find('tbody tr').each(function() { // each(function (){}) : ittération (jquery) 
+                        totalWeight += $(this).data('weight'); // this "correspond" à tr
+                    });
+                    this.$wrapper.find('.js-total-weight').html(totalWeight);
                 }
         };
+
         $(document).ready(function() {
             console.log("ok");
             var $table = $('.js-rep-log-table');
             RepLogApp.initalize($table);
         });
 
-        // $(document).ready(function() {
-            // var $table = $('.js-rep-log-table');
-            // $('.js-delete-rep-log').on('click', function() { 
-            //     console.log('todo delete!');
-            // });
-            // $table.find('.js-delete-rep-log').on('click', function(e) { 
-            //     console.log('todo delete!');
-            //     e.preventDefault(); // empêche le comportement par défaut du navigateur et annule le href du lien
-            //     $(this).addClass('text-danger'); // this est équivalent à e.currentTarget et pointe l'élément DOM sur lequel l'action à lieu.
-            //     $(this).find('.fa')
-            //             .removeClass('fa-trash') 
-            //             .addClass('fa-spinner') 
-            //             .addClass('fa-spin');
-            //     var deleteUrl = $(this).data('url'); // .data() est un racourci pour lire l'attribut data
-            //     var $row = $(this).closest('tr'); //.closest() retourne le premier ancètre qui est un tr
-            //     var $totalWeightContainer = $table.find('.js-total-weight');
-            //     var newWeight = $totalWeightContainer.html() - $row.data('weight');// the magic line
-            //     //soustraction : la valeur de la classe totalWeightContainer - la valeur de l'attribut data weight de $row (tr)
-            //     $.ajax({
-            //         url: deleteUrl, 
-            //         method: 'DELETE', 
-            //         success: function() {
-            //             $row.fadeOut();
-            //             $totalWeightContainer.html(newWeight);
-            //         }
-            //     });
-            // });
-            // $('.js-rep-log-table tbody tr').on('click', function(){
-            //     console.log('tbody tr on click ok!');
-            // })
-            // $table.find('tbody tr').on('click', function(){
-            //     console.log('tbody tr on click ok!');
-            // });
-        // });
     </script>
 {% endblock %}
 
