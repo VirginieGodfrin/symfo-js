@@ -77,32 +77,56 @@
             // l'argument $warper "correspond" à $table 
                 initalize: function($wrapper){
                     this.$wrapper = $wrapper;
-                    this.$wrapper.find('.js-delete-rep-log').on( 'click', this.handleRepLogDelete ); // la fonction est passée à l'action on ('click');
-                    this.$wrapper.find('tbody tr').on('click', this.handleRowClick);
+                    // A chaque fois que vous enregistrez une fonction de gestion d'événements, il est recommander de lier les écouteurs d'événement avec l'objet => utilisez bind () pour vous assurer que c'est toujours le cas dans toutes les méthodes de votre objet =>(.bind(this))
+                    this.$wrapper.find('.js-delete-rep-log').on( 'click', this.handleRepLogDelete.bind(this) ); // la fonction est passée à l'action on ('click');
+                    this.$wrapper.find('tbody tr').on('click', this.handleRowClick.bind(this));
+
+                    // test this
+                    //nouvel objet newThis
+                    // var newThis = {cat: 'meow', dog: 'woof'};
+                    // var boundWhatIsThis = this.whatIsThis.bind(this);
+                    //test whatisThis
+                    // this.whatIsThis('hello');
+                    // je force newThis pour qu'il corresponde à this
+                    // this.whatIsThis.call(newThis, 'hello'); // call() est une fonction propre aux objets js, ici call permet de passé l'objet newthis à la fonction whatIsThis de RepLogApp
+                    // boundWhatIsThis.call(newThis, 'hello');
                 },
             // 2° clé 
                 handleRepLogDelete: function(e) {
                     e.preventDefault();
-                    $(this).addClass('text-danger');
-                    $(this).find('.fa')
+                    // e.currentTarget == this
+                    var $link = $(e.currentTarget);
+                    // $(this).addClass('text-danger');
+                    $link.addClass('text-danger');
+                    // $(this).find('.fa')
+                            // .removeClass('fa-trash') 
+                            // .addClass('fa-spinner') 
+                            // .addClass('fa-spin');
+                    $link.find('.fa')
                             .removeClass('fa-trash') 
                             .addClass('fa-spinner') 
                             .addClass('fa-spin');
 
-                    var deleteUrl = $(this).data('url'); 
-                    var $row = $(this).closest('tr');
+                    // var deleteUrl = $(this).data('url');
+                    var deleteUrl = $link.data('url'); 
+                    // var $row = $(this).closest('tr');
+                    var $row = $link.closest('tr');
                     var $totalWeightContainer = RepLogApp.$wrapper.find('.js-total-weight'); // je fait référence à la propriété statique $wrapper de l'objet repLogApp
                     var newWeight = $totalWeightContainer.html() - $row.data('weight');
 
+                    // 2. Assurez-vous de référencer votre objet avec this, au lieu du nom de votre objet. Ce n'est pas une règle absolue, cela vous donnera plus de flexibilité à long terme.
+                    var self = this;
                     $.ajax({
                         url: deleteUrl, 
                         method: 'DELETE', 
                         success: function() {
                             $row.fadeOut('normal', function(){
-                                $row.remove();
+                                // $row.remove(); ou
+                                this.remove();
                             });
                             $totalWeightContainer.html(newWeight);
-                            RepLogApp.updateTotalWeightLifted();
+                            // RepLogApp.updateTotalWeightLifted();
+                            self.updateTotalWeightLifted();
                         }
                     });
                 },
@@ -117,7 +141,13 @@
                         totalWeight += $(this).data('weight'); // this "correspond" à tr
                     });
                     this.$wrapper.find('.js-total-weight').html(totalWeight);
-                }
+                },
+
+            // chaque fois que vous avez une fonction de rappel (callback) - une fonction appellée dans une autre fonction - this aura changé. This est utilisé dans les fonctions de clic, à l'intérieur de .each (), à l'intérieur du succès et même à l'intérieur de $ row.fadeOut ().
+            //debug function
+            whatIsThis: function(greeting) { 
+                console.log(this, greeting);
+            }
         };
 
         $(document).ready(function() {
@@ -125,6 +155,9 @@
             var $table = $('.js-rep-log-table');
             RepLogApp.initalize($table);
         });
+
+        
+
 
     </script>
 {% endblock %}
