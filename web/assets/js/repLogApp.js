@@ -16,6 +16,9 @@
         this.helper = new Helper(this.$wrapper);
         this.$wrapper.find('.js-delete-rep-log').on( 'click', this.handleRepLogDelete.bind(this) );
         this.$wrapper.find('tbody tr').on('click', this.handleRowClick.bind(this));
+        console.log(this.helper, Object.keys(this.helper));
+        console.log(Helper, Object.keys(Helper));
+        console.log(this.helper.calculateTotalWeight() );
     	},
         // 2° clé 
         handleRepLogDelete: function(e) {
@@ -70,7 +73,10 @@
     var Helper = function ($wrapper) {
         this.$wrapper = $wrapper; 
     };
-    Helper.calculateTotalWeight = function() {
+    // Lorsque l'on crée des objets qui doivent être instanciés, 
+    // on doit ajouter ses propriétés et méthodes en utilisant prototype
+    // ainsi elle font partie intégrante de l'objet
+    Helper.prototype.calculateTotalWeight = function() {
         var totalWeight = 0;
         this.$wrapper.find('tbody tr').each(function() {
             totalWeight += $(this).data('weight');
