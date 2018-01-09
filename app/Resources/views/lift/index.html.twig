@@ -69,12 +69,14 @@
 {% endblock %}
 {% block javascripts %} 
     {{ parent() }}
+
     <script src="{{ asset('assets/js/RepLogApp.js') }}"></script>
     <script>
         $(document).ready(function() {
             console.log("ok");
             var $table = $('.js-rep-log-table');
             RepLogApp.initalize($table);
+             console.log(Helper);
         });
     </script>
 {% endblock %}
