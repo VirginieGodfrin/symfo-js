@@ -3,8 +3,12 @@
 // Mais maintenant que nous sommes à l'intérieur d'une fonction, 
 // les variables RepLogApp et Helper ne sont accessibles qu'à partir de l'intérieur 
 // de cette fonction auto-exécutable.
-(function () {
-    var RepLogApp = {
+
+(function (window, $) {
+    'use strict';
+    // window. est une variable de fenêtre globale, window conient toutes les variable globales, 
+    // window.RepLogApp est une variable globalle
+    window.RepLogApp = {
     	// 1° clé initialisation
     	initalize: function($wrapper){
         this.$wrapper = $wrapper;
@@ -59,6 +63,7 @@
     /*
      * Private object
      */
+    // sans  var, Helper devient global
     var Helper = {
         initialize: function ($wrapper){
             this.$wrapper = $wrapper;
@@ -71,4 +76,4 @@
             return totalWeight;
         },
     };
-}();
+})(window, jQuery);
