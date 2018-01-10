@@ -75,9 +75,10 @@
     console.log(window === this);
         $(document).ready(function() {
             console.log("ok");
-
             var $table = $('.js-rep-log-table');
-            RepLogApp.initalize($table);
+            // RepLogApp.initalize($table);
+            // tadam :
+            var repLogApp = new RepLogApp($table);
 
         });
     </script>
