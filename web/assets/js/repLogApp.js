@@ -7,6 +7,7 @@
         this.helper = new Helper(this.$wrapper);
         this.$wrapper.find('.js-delete-rep-log').on( 'click', this.handleRepLogDelete.bind(this));
         this.$wrapper.find('tbody tr').on('click', this.handleRowClick.bind(this));
+        this.$wrapper.find('.js-new-rep-log-form').on( 'submit', this.handleNewFormSubmit.bind(this) );
     };
     // méthodes
     // jQuery.extend(): Fusionner le contenu de deux ou plusieurs objets ensemble dans le premier objet.
@@ -40,6 +41,17 @@
         },
         handleRowClick: function() {
             console.log('tbody tr on click ok!');
+        },
+
+        handleNewFormSubmit: function(e) { 
+            e.preventDefault(); 
+            console.log('submitting!');
+            var $form = $(e.currentTarget);// recup du form
+            $.ajax({
+                url: $form.attr('action'), 
+                method: 'POST',
+                data: $form.serialize() //!!! serialise()
+            });
         }
     });
     // obj Helper
