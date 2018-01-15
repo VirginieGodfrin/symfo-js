@@ -47,10 +47,18 @@
             e.preventDefault(); 
             console.log('submitting!');
             var $form = $(e.currentTarget);// recup du form
+            var $tbody = this.$wrapper.find('tbody');
             $.ajax({
                 url: $form.attr('action'), 
                 method: 'POST',
-                data: $form.serialize() //!!! serialise()
+                data: $form.serialize(), //!!! serialise()
+                success: function(data) { // callback
+                    // $form.closest('.js-new-rep-log-form-wrapper').html(data);
+                    $tbody.append(data);
+                },
+                error: function(jqXHR) {
+                    $form.closest('.js-new-rep-log-form-wrapper').html(jqXHR.responseText);
+                } 
             });
         }
     });

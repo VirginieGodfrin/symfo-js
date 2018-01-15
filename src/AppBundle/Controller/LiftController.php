@@ -6,6 +6,7 @@ use AppBundle\Entity\RepLog;
 use AppBundle\Form\Type\RepLogType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class LiftController extends BaseController
 {
@@ -38,6 +39,24 @@ class LiftController extends BaseController
         $totalWeight = 0;
         foreach ($repLogs as $repLog) {
             $totalWeight += $repLog->getTotalWeightLifted();
+        }
+ 
+        // si la réponse est une requête XML dans le cas d'une erreur de validation
+        // if ($request->isXmlHttpRequest()) { 
+
+        //     return $this->render('lift/_repRow.html.twig', [
+        //         'repLog' => $repLog
+        //     ]);
+        //  render renvoie une reponse http 200 même en cas d'erreur (success)
+        // }
+
+        if ($request->isXmlHttpRequest()) {
+            // $html prend pour valeur la vue du formulaire 
+            $html = $this->renderView('lift/_form.html.twig', [ 
+                'form' => $form->createView()
+            ]);
+            // et est retournée avec un une réponse http 400 (error)
+            return new Response($html, 400);
         }
 
         return $this->render('lift/index.html.twig', array(
