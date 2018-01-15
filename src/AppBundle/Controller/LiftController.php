@@ -28,8 +28,13 @@ class LiftController extends BaseController
             $em->persist($repLog);
             $em->flush();
 
+            // ajout d'une ligne dans le tab en cas de succès
+            if ($request->isXmlHttpRequest()) {
+                return $this->render('lift/_repRow.html.twig', [
+                'repLog' => $repLog
+                ]); 
+            }
             $this->addFlash('notice', 'Reps crunched!');
-
             return $this->redirectToRoute('lift');
         }
 

@@ -5,9 +5,10 @@
     window.RepLogApp = function($wrapper){
         this.$wrapper = $wrapper;
         this.helper = new Helper(this.$wrapper);
-        this.$wrapper.find('.js-delete-rep-log').on( 'click', this.handleRepLogDelete.bind(this));
-        this.$wrapper.find('tbody tr').on('click', this.handleRowClick.bind(this));
-        this.$wrapper.find('.js-new-rep-log-form').on( 'submit', this.handleNewFormSubmit.bind(this) );
+        // .on('event', 'selector', methode)
+        this.$wrapper.on('click', '.js-delete-rep-log', this.handleRepLogDelete.bind(this));
+        this.$wrapper.on('click','tbody tr', this.handleRowClick.bind(this));
+        this.$wrapper.on('submit','.js-new-rep-log-form', this.handleNewFormSubmit.bind(this));
     };
     // méthodes
     // jQuery.extend(): Fusionner le contenu de deux ou plusieurs objets ensemble dans le premier objet.
@@ -48,6 +49,7 @@
             console.log('submitting!');
             var $form = $(e.currentTarget);// recup du form
             var $tbody = this.$wrapper.find('tbody');
+            var self = this;
             $.ajax({
                 url: $form.attr('action'), 
                 method: 'POST',
@@ -55,6 +57,8 @@
                 success: function(data) { // callback
                     // $form.closest('.js-new-rep-log-form-wrapper').html(data);
                     $tbody.append(data);
+                    self.updateTotalWeightLifted();
+                    console.log(self.updateTotalWeightLifted());
                 },
                 error: function(jqXHR) {
                     $form.closest('.js-new-rep-log-form-wrapper').html(jqXHR.responseText);
