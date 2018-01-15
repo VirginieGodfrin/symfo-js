@@ -48,20 +48,27 @@
             e.preventDefault(); 
             console.log('submitting!');
             var $form = $(e.currentTarget);// recup du form
+            var formData = {};
+            $.each($form.serializeArray(), function(key, fieldData) {
+                formData[fieldData.name] = fieldData.value
+            });
             var $tbody = this.$wrapper.find('tbody');
             var self = this;
             $.ajax({
-                url: $form.attr('action'), 
+                // url: $form.attr('action'),
+                url: $form.data('url'), 
                 method: 'POST',
-                data: $form.serialize(), //!!! serialise()
+                // data: $form.serialize(), //!!! serialise()
+                data: JSON.stringify(formData),
                 success: function(data) { // callback
                     // $form.closest('.js-new-rep-log-form-wrapper').html(data);
-                    $tbody.append(data);
-                    self.updateTotalWeightLifted();
-                    console.log(self.updateTotalWeightLifted());
+                    // $tbody.append(data);
+                    // self.updateTotalWeightLifted();
+                    console.log('success');
                 },
                 error: function(jqXHR) {
-                    $form.closest('.js-new-rep-log-form-wrapper').html(jqXHR.responseText);
+                    // $form.closest('.js-new-rep-log-form-wrapper').html(jqXHR.responseText);
+                    console.log('error:(');
                 } 
             });
         }

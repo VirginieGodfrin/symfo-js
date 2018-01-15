@@ -29,11 +29,11 @@ class LiftController extends BaseController
             $em->flush();
 
             // ajout d'une ligne dans le tab en cas de succès
-            if ($request->isXmlHttpRequest()) {
-                return $this->render('lift/_repRow.html.twig', [
-                'repLog' => $repLog
-                ]); 
-            }
+            // if ($request->isXmlHttpRequest()) {
+            //     return $this->render('lift/_repRow.html.twig', [
+            //     'repLog' => $repLog
+            //     ]); 
+            // }
             $this->addFlash('notice', 'Reps crunched!');
             return $this->redirectToRoute('lift');
         }
@@ -55,14 +55,14 @@ class LiftController extends BaseController
         //  render renvoie une reponse http 200 même en cas d'erreur (success)
         // }
 
-        if ($request->isXmlHttpRequest()) {
-            // $html prend pour valeur la vue du formulaire 
-            $html = $this->renderView('lift/_form.html.twig', [ 
-                'form' => $form->createView()
-            ]);
-            // et est retournée avec un une réponse http 400 (error)
-            return new Response($html, 400);
-        }
+        // if ($request->isXmlHttpRequest()) {
+        //     // $html prend pour valeur la vue du formulaire 
+        //     $html = $this->renderView('lift/_form.html.twig', [ 
+        //         'form' => $form->createView()
+        //     ]);
+        //     // et est retournée avec un une réponse http 400 (error)
+        //     return new Response($html, 400);
+        // }
 
         return $this->render('lift/index.html.twig', array(
             'form' => $form->createView(),
