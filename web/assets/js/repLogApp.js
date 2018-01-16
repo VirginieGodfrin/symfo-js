@@ -63,7 +63,8 @@
                 method: 'POST',
                 data: JSON.stringify(formData),
                 success: function(data) { // callback
-                    console.log('success');
+                    self._clearForm();
+                    self._addRow(data);
                 },
                 error: function(jqXHR) {
                     var errorData = JSON.parse(jqXHR.responseText);
@@ -72,9 +73,8 @@
             });
         },
         _mapErrorsToForm: function(errorData) { 
+            this._removeFormErrors();
             var $form = this.$wrapper.find(this._selectors.newRepForm);
-            $form.find('.js-field-error').remove(); 
-            $form.find('.form-group').removeClass('has-error');
             $form.find(':input').each(function() {
                 var fieldName = $(this).attr('name');
                 var $wrapper = $(this).closest('.form-group');
@@ -87,6 +87,19 @@
                 $wrapper.append($error);
                 $wrapper.addClass('has-error');
             });
+        },
+        _removeFormErrors: function() {
+            var $form = this.$wrapper.find(this._selectors.newRepForm);
+            $form.find('.js-field-error').remove(); 
+            $form.find('.form-group').removeClass('has-error');
+        },
+        _clearForm: function(){
+            this._removeFormErrors();
+            var $form = this.$wrapper.find(this._selectors.newRepForm);
+            $form[0].reset();
+        },
+        _addRow: function(repLog) { 
+            console.log(repLog);
         }
     });
     // obj Helper
