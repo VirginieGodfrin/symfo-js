@@ -8,11 +8,15 @@
         // .on('event', 'selector', methode)
         this.$wrapper.on('click', '.js-delete-rep-log', this.handleRepLogDelete.bind(this));
         this.$wrapper.on('click','tbody tr', this.handleRowClick.bind(this));
-        this.$wrapper.on('submit','.js-new-rep-log-form', this.handleNewFormSubmit.bind(this));
+        this.$wrapper.on('submit', this._selectors.newRepForm, this.handleNewFormSubmit.bind(this));
     };
     // méthodes
     // jQuery.extend(): Fusionner le contenu de deux ou plusieurs objets ensemble dans le premier objet.
     $.extend(window.RepLogApp.prototype,{
+        // nouvelle propriété(attribut) _selector => clé: newRepForm , valeur :'.js-new-rep-log-form' (obj)
+        _selectors: {
+            newRepForm: '.js-new-rep-log-form' 
+        },
         handleRepLogDelete: function(e) {
             e.preventDefault();
 
@@ -55,21 +59,33 @@
             var $tbody = this.$wrapper.find('tbody');
             var self = this;
             $.ajax({
-                // url: $form.attr('action'),
                 url: $form.data('url'), 
                 method: 'POST',
-                // data: $form.serialize(), //!!! serialise()
                 data: JSON.stringify(formData),
                 success: function(data) { // callback
-                    // $form.closest('.js-new-rep-log-form-wrapper').html(data);
-                    // $tbody.append(data);
-                    // self.updateTotalWeightLifted();
                     console.log('success');
                 },
                 error: function(jqXHR) {
-                    // $form.closest('.js-new-rep-log-form-wrapper').html(jqXHR.responseText);
-                    console.log('error:(');
+                    var errorData = JSON.parse(jqXHR.responseText);
+                    self._mapErrorsToForm(errorData.errors);
                 } 
+            });
+        },
+        _mapErrorsToForm: function(errorData) { 
+            var $form = this.$wrapper.find(this._selectors.newRepForm);
+            $form.find('.js-field-error').remove(); 
+            $form.find('.form-group').removeClass('has-error');
+            $form.find(':input').each(function() {
+                var fieldName = $(this).attr('name');
+                var $wrapper = $(this).closest('.form-group');
+                if (!errorData[fieldName]) {
+                    // no error!
+                    return; 
+                }
+                var $error = $('<span class="js-field-error help-block"></span>');
+                $error.html(errorData[fieldName]);
+                $wrapper.append($error);
+                $wrapper.addClass('has-error');
             });
         }
     });
