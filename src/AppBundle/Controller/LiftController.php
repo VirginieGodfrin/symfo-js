@@ -27,13 +27,6 @@ class LiftController extends BaseController
 
             $em->persist($repLog);
             $em->flush();
-
-            // ajout d'une ligne dans le tab en cas de succès
-            // if ($request->isXmlHttpRequest()) {
-            //     return $this->render('lift/_repRow.html.twig', [
-            //     'repLog' => $repLog
-            //     ]); 
-            // }
             $this->addFlash('notice', 'Reps crunched!');
             return $this->redirectToRoute('lift');
         }
@@ -45,30 +38,9 @@ class LiftController extends BaseController
         foreach ($repLogs as $repLog) {
             $totalWeight += $repLog->getTotalWeightLifted();
         }
- 
-        // si la réponse est une requête XML dans le cas d'une erreur de validation
-        // if ($request->isXmlHttpRequest()) { 
-
-        //     return $this->render('lift/_repRow.html.twig', [
-        //         'repLog' => $repLog
-        //     ]);
-        //  render renvoie une reponse http 200 même en cas d'erreur (success)
-        // }
-
-        // if ($request->isXmlHttpRequest()) {
-        //     // $html prend pour valeur la vue du formulaire 
-        //     $html = $this->renderView('lift/_form.html.twig', [ 
-        //         'form' => $form->createView()
-        //     ]);
-        //     // et est retournée avec un une réponse http 400 (error)
-        //     return new Response($html, 400);
-        // }
-
         return $this->render('lift/index.html.twig', array(
             'form' => $form->createView(),
-            'repLogs' => $repLogs,
-            'leaderboard' => $this->getLeaders(),
-            'totalWeight' => $totalWeight,
+            'leaderboard' => $this->getLeaders()
         ));
     }
 

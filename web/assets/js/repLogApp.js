@@ -1,10 +1,12 @@
-(function (window, $) {
+// arguments
+(function (window, $, Routing) {
     'use strict';
     // obj RepLogApp
     // gestionnaire d'évènements
     window.RepLogApp = function($wrapper){
         this.$wrapper = $wrapper;
         this.helper = new Helper(this.$wrapper);
+        this.loadRepLogs();
         // .on('event', 'selector', methode)
         this.$wrapper.on('click', '.js-delete-rep-log', this.handleRepLogDelete.bind(this));
         this.$wrapper.on('click','tbody tr', this.handleRowClick.bind(this));
@@ -16,6 +18,18 @@
         // nouvelle propriété(attribut) _selector => clé: newRepForm , valeur :'.js-new-rep-log-form' (obj)
         _selectors: {
             newRepForm: '.js-new-rep-log-form' 
+        },
+        loadRepLogs: function() {
+            var self = this;
+            $.ajax({
+                url: Routing.generate('rep_log_list'),
+                success: function(data){
+                    console.log(data);
+                    $.each(data.items, function(key, repLog) {
+                        self._addRow(repLog);
+                    });
+                }
+            });
         },
         handleRepLogDelete: function(e) {
             e.preventDefault();
@@ -105,6 +119,7 @@
             this.$wrapper.find('tbody').append($.parseHTML(html));
             this.updateTotalWeightLifted();
         }
+
     });
     // obj Helper
     // constructor
@@ -122,4 +137,4 @@
         }
     });
 
-})(window, jQuery);
+})(window, jQuery, Routing); 

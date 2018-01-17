@@ -14,17 +14,21 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class RepLogController extends BaseController
 {
     /**
-     * @Route("/reps", name="rep_log_list")
+     * @Route("/reps", options={"expose"=true}, name="rep_log_list")
      * @Method("GET")
      */
-    public function getRepLogsAction()
-    {
-        $models = $this->findAllUsersRepLogModels();
-
-        return $this->createApiResponse([
+    public function getRepLogsAction() {
+        $repLogs = $this->getDoctrine()->getRepository('AppBundle:RepLog') 
+            ->findBy(array('user' => $this->getUser()));
+        $models = [];
+        foreach ($repLogs as $repLog) {
+            $models[] = $this->createRepLogApiModel($repLog); 
+        }
+        return $this->createApiResponse([ 
             'items' => $models
-        ]);
+        ]); 
     }
+    // options={"expose" = true} : rend la classe routing de FosJsRoutingBundle disponible
 
     /**
      * @Route("/reps/{id}", name="rep_log_get")
