@@ -83,7 +83,14 @@
                 error: function(jqXHR) {
                     var errorData = JSON.parse(jqXHR.responseText);
                     self._mapErrorsToForm(errorData.errors);
-                } 
+                }
+            }).then(function(data) { 
+                    console.log('I am successful!'); 
+                    console.log(data);
+                    return data;
+            }).then(function(data) { 
+                    console.log('I am successful!'); 
+                    console.log(data);
             });
         },
         _mapErrorsToForm: function(errorData) { 
