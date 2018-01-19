@@ -38,27 +38,18 @@
                 title: 'Are you sure to delete this log?',
                 text: "You won't be able to revert this!",
                 showCancelButton: true,
-            }).then((result) => {
-                if (result.value) {
-                    self._deleteRepLog($link);
-                  // result.dismiss can be 'overlay', 'cancel', 'close', 'esc', 'timer'
-                } else if (result.dismiss === 'cancel') {
-                    console.log("canceled");
-                    swal(
+                showLoaderOnConfirm: true,
+                preConfirm: function() {
+                    return self._deleteRepLog($link);
+                }
+            }).then(function(arg){ // catch don't work
+                console.log('canceled', arg);
+                 swal(
                       'Cancelled',
                       'Your imaginary file is safe :)',
                       'error'
-                    )
-                }
+                )
             });
-            // don't work !!! 
-            // }).then( function () {
-            //     self._deleteRepLog($link); 
-            // }).catch(function(arg) { 
-            //     console.log('canceled', arg);
-            // });
-
-
         },
         _deleteRepLog: function($link){
             $link.addClass('text-danger');
