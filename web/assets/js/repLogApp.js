@@ -118,10 +118,23 @@
             this.updateTotalWeightLifted();
         },
         _saveRepLog: function(data) { // return a promise
-            return $.ajax({
-                url: Routing.generate('rep_log_new'), 
-                method: 'POST',
-                data: JSON.stringify(data)
+            return new Promise(function(resolve, reject) { // new promise obj
+                $.ajax({
+                    url: Routing.generate('rep_log_new'), 
+                    method: 'POST',
+                    data: JSON.stringify(data)
+                }).then(function(data, textStatus, jqXHR) {
+                    console.log(jqXHR.getResponseHeader('Location')); // recupération de response->header in newRepLogAction()
+                    $.ajax({
+                        url: jqXHR.getResponseHeader('Location')
+                    }).then(function(data){
+                        console.log('now we are REALLY done');
+                        console.log(data);
+                        resolve(data);
+                    }).catch(function(jqXHR) { // pas nécessaire
+                        reject(jqXHR);
+                    });
+                });
             });
         }
 
