@@ -51,6 +51,7 @@
                     this.remove();
                 });
                 self.updateTotalWeightLifted();
+
             });
         },
         updateTotalWeightLifted: function() {
@@ -75,10 +76,8 @@
                     // promise (success)
                     console.log('ok');
                     self._clearForm(); 
-                    self._addRow(data);
+                    self._addRow(data); // déclenche une exception 
                 }).catch(function(jqXHR){
-                    // gestion des erreurs (error)
-                    console.log('error');
                     var errorData = JSON.parse(jqXHR.responseText);
                     self._mapErrorsToForm(errorData.errors);
                 });
