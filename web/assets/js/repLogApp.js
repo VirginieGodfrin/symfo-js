@@ -1,5 +1,5 @@
 // arguments
-(function (window, $, Routing) {
+(function (window, $, Routing, swal) {
     'use strict';
     // obj RepLogApp
     // gestionnaire d'évènements
@@ -33,6 +33,34 @@
         handleRepLogDelete: function(e) {
             e.preventDefault();
             var $link = $(e.currentTarget);
+            var self = this;
+            swal({
+                title: 'Are you sure to delete this log?',
+                text: "You won't be able to revert this!",
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.value) {
+                    self._deleteRepLog($link);
+                  // result.dismiss can be 'overlay', 'cancel', 'close', 'esc', 'timer'
+                } else if (result.dismiss === 'cancel') {
+                    console.log("canceled");
+                    swal(
+                      'Cancelled',
+                      'Your imaginary file is safe :)',
+                      'error'
+                    )
+                }
+            });
+            // don't work !!! 
+            // }).then( function () {
+            //     self._deleteRepLog($link); 
+            // }).catch(function(arg) { 
+            //     console.log('canceled', arg);
+            // });
+
+
+        },
+        _deleteRepLog: function($link){
             $link.addClass('text-danger');
             $link.find('.fa')
                 .removeClass('fa-trash') 
@@ -78,7 +106,7 @@
                     self._clearForm(); 
                     self._addRow(data); // déclenche une exception 
                 }).catch(function(jqXHR){
-                    var errorData = JSON.parse(jqXHR.responseText);
+                    // var errorData = JSON.parse(jqXHR.responseText);
                     self._mapErrorsToForm(errorData.errors);
                 });
             // catch: capture la promesse échouée et renvoie une nouvelle promesse qui se résout avec succès. 
@@ -132,6 +160,7 @@
                         console.log(data);
                         resolve(data);
                     }).catch(function(jqXHR) { // pas nécessaire
+                        var errorData = JSON.parse(jqXHR.responseText);
                         reject(jqXHR);
                     });
                 });
@@ -155,4 +184,4 @@
         }
     });
 
-})(window, jQuery, Routing); 
+})(window, jQuery, Routing, swal); 

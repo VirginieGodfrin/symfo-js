@@ -47,9 +47,14 @@
     </div>
     
 {% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.4.1/sweetalert2.css">
+    {% endblock %}   
 {% block javascripts %} 
     {{ parent() }}
-
+    {# sweetAlert #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.4.1/sweetalert2.all.min.js"></script>
     <script src="{{ asset('assets/js/RepLogApp.js') }}"></script>
     <script>
     console.log(window === this);
