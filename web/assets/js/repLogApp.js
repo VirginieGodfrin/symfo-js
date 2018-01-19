@@ -23,17 +23,15 @@
             var self = this;
             $.ajax({
                 url: Routing.generate('rep_log_list'),
-                success: function(data){
-                    console.log(data);
-                    $.each(data.items, function(key, repLog) {
-                        self._addRow(repLog);
-                    });
-                }
+            }).then(function(data){ // promise
+                console.log("loadRepLogs: "+data);
+                $.each(data.items, function(key, repLog) {
+                    self._addRow(repLog);
+                });
             });
         },
         handleRepLogDelete: function(e) {
             e.preventDefault();
-
             var $link = $(e.currentTarget);
             $link.addClass('text-danger');
             $link.find('.fa')
@@ -46,13 +44,13 @@
             var self = this;
             $.ajax({
                 url: deleteUrl, 
-                method: 'DELETE', 
-                success: function() {
-                    $row.fadeOut('normal', function(){
-                        this.remove();
-                    });
-                    self.updateTotalWeightLifted();
-                }
+                method: 'DELETE'
+            }).then(function(){ //promise
+                console.log("handleRepLogDelete");
+                $row.fadeOut('normal', function(){
+                    this.remove();
+                });
+                self.updateTotalWeightLifted();
             });
         },
         updateTotalWeightLifted: function() {
@@ -72,26 +70,20 @@
             });
             var $tbody = this.$wrapper.find('tbody');
             var self = this;
-            $.ajax({
-                url: $form.data('url'), 
-                method: 'POST',
-                data: JSON.stringify(formData),
-                success: function(data) { // callback
-                    self._clearForm();
+            this._saveRepLog(formData)
+                .then(function(data) { 
+                    // promise (success)
+                    console.log('ok');
+                    self._clearForm(); 
                     self._addRow(data);
-                },
-                error: function(jqXHR) {
+                }).catch(function(jqXHR){
+                    // gestion des erreurs (error)
+                    console.log('error');
                     var errorData = JSON.parse(jqXHR.responseText);
                     self._mapErrorsToForm(errorData.errors);
-                }
-            }).then(function(data) { 
-                    console.log('I am successful!'); 
-                    console.log(data);
-                    return data;
-            }).then(function(data) { 
-                    console.log('I am successful!'); 
-                    console.log(data);
-            });
+                });
+            // catch: capture la promesse échouée et renvoie une nouvelle promesse qui se résout avec succès. 
+            // Il sert à gérer les erreurs
         },
         _mapErrorsToForm: function(errorData) { 
             this._removeFormErrors();
@@ -125,6 +117,13 @@
             var html = tpl(repLog);
             this.$wrapper.find('tbody').append($.parseHTML(html));
             this.updateTotalWeightLifted();
+        },
+        _saveRepLog: function(data) { // return a promise
+            return $.ajax({
+                url: Routing.generate('rep_log_new'), 
+                method: 'POST',
+                data: JSON.stringify(data)
+            });
         }
 
     });
